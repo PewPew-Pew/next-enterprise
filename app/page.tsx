@@ -1,73 +1,65 @@
-import React from "react";
-import { useRouter } from "next/router";
-import { BuilderComponent, builder, useIsPreviewing } from "@builder.io/react";
-import { BuilderContent } from "@builder.io/sdk";
-import DefaultErrorPage from "next/error";
-import Head from "next/head";
-import { GetStaticProps } from "next";
+import { Metadata } from "next"
+import { Button } from "components/Button/Button"
+import { LP_GRID_ITEMS } from "lp-items"
 
-// Replace with your Public API Key
-builder.init(abeb445c7ea9460a919a59e11d0b1a86);
-
-// Define a function that fetches the Builder
-// content for a given page
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  // Fetch the builder content for the given page
-  const page = await builder
-    .get("page", {
-      userAttributes: {
-        urlPath: "/" + ((params?.page as string[])?.join("/") || ""),
+export const metadata: Metadata = {
+  title: "Next.js Enterprise Boilerplate",
+  twitter: {
+    card: "summary_large_image",
+  },
+  openGraph: {
+    url: "https://next-enterprise.vercel.app/",
+    images: [
+      {
+        width: 1200,
+        height: 630,
+        url: "https://raw.githubusercontent.com/Blazity/next-enterprise/main/.github/assets/project-logo.png",
       },
-    })
-    .toPromise();
-
-  // Return the page content as props
-  return {
-    props: {
-      page: page || null,
-    },
-    // Revalidate the content every 5 seconds
-    revalidate: 5,
-  };
-};
-
-// Define a function that generates the
-// static paths for all pages in Builder
-export async function getStaticPaths() {
-  // Get a list of all pages in Builder
-  const pages = await builder.getAll("page", {
-    // We only need the URL field
-    fields: "data.url",
-    options: { noTargeting: true },
-  });
-
-  // Generate the static paths for all pages in Builder
-  return {
-    paths: pages.map((page) => `${page.data?.url}`).filter(url => url !== '/'),
-    fallback: 'blocking',
-  };
+    ],
+  },
 }
 
-// Define the Page component
-export default function Page({ page }: { page: BuilderContent | null }) {
-  const router = useRouter();
-  const isPreviewing = useIsPreviewing();
-
-  // If the page content is not available
-  // and not in preview mode, show a 404 error page
-  if (!page && !isPreviewing) {
-    return <DefaultErrorPage statusCode={404} />;
-  }
-
-  // If the page content is available, render
-  // the BuilderComponent with the page content
+export default function Web() {
   return (
     <>
-      <Head>
-        <title>{page?.data?.title}</title>
-      </Head>
-      {/* Render the Builder page */}
-      <BuilderComponent model="page" content={page || undefined} />
+      <section className="bg-white dark:bg-gray-900">
+        <div className="mx-auto grid max-w-screen-xl px-4 py-8 text-center lg:py-16">
+          <div className="mx-auto place-self-center">
+            <h1 className="mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight dark:text-white md:text-5xl xl:text-6xl">
+              Next.js Enterprise Boilerplate
+            </h1>
+            <p className="mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl">
+              Jumpstart your enterprise project with our feature-packed, high-performance Next.js boilerplate!
+              Experience rapid UI development, AI-powered code reviews, and an extensive suite of tools for a smooth and
+              enjoyable development process.
+            </p>
+            <Button href="https://github.com/Blazity/next-enterprise" className="mr-3">
+              Get started
+            </Button>
+            <Button
+              href="https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise"
+              intent="secondary"
+            >
+              Deploy Now
+            </Button>
+          </div>
+        </div>
+      </section>
+      <section className="bg-white dark:bg-gray-900">
+        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:py-16 lg:px-6">
+          <div className="justify-center space-y-8 md:grid md:grid-cols-2 md:gap-12 md:space-y-0 lg:grid-cols-3">
+            {LP_GRID_ITEMS.map((singleItem) => (
+              <div key={singleItem.title} className="flex flex-col items-center justify-center text-center">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 p-1.5 text-blue-700 dark:bg-primary-900 lg:h-12 lg:w-12">
+                  {singleItem.icon}
+                </div>
+                <h3 className="mb-2 text-xl font-bold dark:text-white">{singleItem.title}</h3>
+                <p className="text-gray-500 dark:text-gray-400">{singleItem.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
-  );
+  )
 }
