@@ -1,6 +1,7 @@
 "use client"
 import { builder, Builder, withChildren } from "@builder.io/react";
 import { Button } from "./components/Button/Button";
+import Page from "./pages/[...page]";
 import { Tooltip } from "./components/Tooltip/Tooltip";
 
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
@@ -61,5 +62,18 @@ Builder.registerComponent(withChildren(Tooltip), {
         }, {
             name: "withArrow",
             type: "boolean"
+        }]
+});
+
+Builder.registerComponent(Page, {
+    name: "Page",
+    inputs: [{
+            name: "page",
+            type: "object",
+            hideFromUI: true,
+            meta: {
+                ts: "BuilderContent"
+            },
+            required: true
         }]
 });
